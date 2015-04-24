@@ -1,0 +1,599 @@
+ matching ')' expected.
+ expected scalar variable, function, or other factor.               
+ expected variable name ( start with 'a' - 'z' ).                     
+ '=' expected.                                                      
+ illegal formal parameter.                                         
+error in parameter list. ',' or ')' expected.                        
+error in function definition. '=' expected.                     
+function must have right hand side.                        
+error in function definition. '('  expected.                     
+error in function definition. ')'  expected.                    
+function name must start with capital letter.                      
+ error in function definition. '(' or '=' expected.                   
+ condition must be <, =, >=, <=, or <>.                            
+ too few arguments.                                               
+ ')' expected. too many arguments?                                      
+attempt to reference undefined function.                            
+_m,_p,_P,_o,_M,A,e,E,H,P,p,n,N,m,M,t,T,>,},],a,x,s,S,g,q,h,o,U,|,l. 
+ illegal command symbol, or command is too long.                
+ no variable by that name exists.                               
+ no such function name.                                         
+ after @, expected a variable or function name.                 
+ can't divide by 0.                                             
+ sparse array is too big for longint type (2^31-1).             
+ expected ']' at end of array expression.                       
+ expected '=' or '.' in array assignment statement.             
+ no room left for this array.                                   
+ array index out of bounds.                                     
+ no such array name.                                            
+ array element has not been initialized.                        
+mismatch of array arg. & param. "x" instead of "[x]" ?         
+ error in function definition. '.' or ';' expected.                   
+exponent is too large in absolute value (>=2^28).                     
+ illegal file name or prompt name.                              
+ can't take square root in modular mode.                        
+ can't put a comment here.                                      
+ can't do this to a Sparse matrix when modulus <= rows.         
+ can't take square root of negative number.                     
+ error in function definition. missing semicolon?               
+ dimensions of arrays do not match.                           
+illegal array name.                                                                   
+illegal syntax for array expression.                           
+ array name must start with lower case letter.                  
+ array size would exceed maximum allowed (1000000).             
+ matrix is not invertible.                                      
+ unable to figure out the size of this diagonal matrix.         
+ can't apply determinant, Det, Sort, or Sumup to a scalar.      
+ index variable is no longer a small integer.                   
+ in ...#(x = [a]), an array entry in [a] is undefined.          
+ expected ',' or 'to' in for-loop.                              
+ initial value of for-loop is not a small integer (< 2^28).              
+ index variable in for-loop must be legal variable name.        
+ stopping value of for-loop must be small integer.              
+ increment value of for-loop must be small integer.             
+ no heap space left. Cancel last array definition.              
+ can't take subarray of undefined array.                        
+ a subarray row coord. is less than 1 [or 0] or too big.        
+ in subarray, stopping row is less than starting row.           
+ a subarray column coord. is less than 1 [or 0] or too big.     
+ in subarray, stopping column is < starting column.             
+ in subarray, dimensions of target do not match source's.       
+ expected ']' or '~' in subarray coordinate computation.        
+ this operation valid only in modularmode or rational mode.     
+ expected second '|' for absolute value.                        
+ expected '(' in array indexing function, Det#(...              
+expected '=', '>', or '<' in array indexing function, Det#(... 
+ expected ')' at close of array indexing function, Det#(...).   
+ in Rcoef(Numer(x...) or Rcoef(Denom(x...), x can't be numb.    
+ expected an expression, not an assignment statement.           
+ end of line encountered  while reading a quote.                
+ expected ',' or ']' or ')' while processing a list.            
+ list (or string) is too large; maximum size is 62500.          
+ can't apply Transpose, Adjoint, or Altmult to a scalar.        
+ can't change ground ring when command level > 1.                   
+ with Diag, can't take diagonal matrix from a scalar.           
+ diagonal must be taken from square matrix.                     
+ resulting diagonal matrix would be too large.                  
+ expected 'from' (or '=') after index variable in for-loop.     
+ expected '>' at end of for-loop or with Sigma or Prod.         
+ in array-defining for-loop initial index must be >=1 [or 0].   
+ in array-defining for-loop final index must be >= 1 [or 0].    
+ expected '>' to end definition of loop.                        
+ in array-defining for-loop,increment must be >=1.              
+ can't use subarray with system array.                            
+ improper modulus.  must be > 1 and < 65536.                    
+ can't invert number when g.c.d.(modulus, number) <> 1.         
+ expected comma in &p or &P command in input file.              
+in Bin(n,r), n is too big (>150 in modular, >1754 in rational) 
+ no space for this matrix operation.  Use simpler syntax.       
+ no space for matrix inversion. Let previous matrix calls end.  
+ no space left for determinant. Let previous matrix calls end.  
+ argument to Cfunc or Pfunc must be number.                     
+ expected '[' after Diag.                                       
+ in Diag with subarray, dims. of target do not match source.    
+ number is too large for factorial function.                    
+ expected ')' or ',' while processing cancel @.                 
+ expected '[' while processing Cols.                            
+ expected ']' while processing Cols.                            
+ We already have a field involving a higher poly var.           
+ expected ']' while processing Deg or Codeg.                    
+ expected '[' while processing array name change.               
+ expected ']' while processing array name change.               
+ expected quote (') while processing array name change.         
+ encountered end of file while reading function definition.     
+ expected ')' or end of boolean expression.                     
+ expected ',' while processing display  ! .                     
+ semicolon is not legal in an output display list.              
+ expected ']' or end-of-line with '?' with subarray.            
+ expected matching ' in character string.                       
+ expected matching ' --  can have 1 character only here.        
+ can't have an empty string.                                    
+ can't concatenate; array would be too large.                   
+ expected match of either rows or columns in concatenate.       
+ can't concatenate scalars.                                     
+ after '&', token must be single character.                     
+ operation only applies to scalars.                             
+ exponent must be integer, not rational or polynomial.          
+ _ must be used in modular mode; follow with digits or -.       
+ array coordinate must be number.                               
+with Det_ or Det^, entries in array must be numbers.                  
+with Det#(>) or Det#(<), entries in array must be scalar.               
+ can't display polynomial as character, only numbers.           
+ Sorry, array is not Sparse; you must find pseudodet yourself.  
+ can't compare nonscalar polynomials with > or <.               
+ improper name for polynomial variable.                         
+ can't use a polynomial variable name for anything else.        
+ That name has already been taken.                              
+ expected ')' at end of expression.                             
+ expected '>' at end of purge command.                          
+ expected end of command or expression.                          
+ operation only applies to integers.                            
+ expected '(' after &_m.                                        
+ Extra semicolon. Maybe need cont. char, a ')', or a period.    
+with &(.. need 0 or 1 unless it's &(n, &(A, &(_d, &(_r or &(D.           
+ pseudo determinant must be > 0.                                
+ expected ')' at end of &(...).                                 
+with &(.. expected a,e,E,c,B,m,n,t,A,N,S,D,P,R,M,U,|,_m, or l. 
+ with this &(... you can't give a negative number.              
+ can't delete an array parameter.                               
+ which is an array parameter matched with an array              
+ can't change name of array parameter.                          
+ expected S, R, or M with quoted string in &(...).              
+ can't figure out how big to make this random array.            
+ denominator for random must be scalar, not polynomial.         
+ expected '<' after Sigma or Prod.                              
+ with Sigma or Prod, expected '<', '[' or '(' after '>'.        
+ must specify 0 or 1 when changing command interrupt.           
+ with &(... must specify scalar, not polynomial.                
+ precision (or modulus) must be scalar, not polynomial.         
+ can't use same name for input and output.                      
+ expected ')' at end of polynomial evaluation.                  
+ expected poly. variable after '(' in poly. evaluation.         
+ expected colon to start assignment statement.                  
+ matching ']' expected in complex condition.                    
+ expected '(' after 'Coef' (Coef or Rcoef).                     
+ later arguments to Coef must be numbers.                       
+ second or later argument to Coef is improper.                  
+ in Rcoef(...,  ) ... must be variable name.                    
+ in Rcoef(...) = <source>, your <source> is inappropriate.      
+ in reading poly, must have decr.expons. and proper nesting.    
+ only names of poly vars are allowed while reading poly.        
+ expected poly var name in reading poly.                        
+ in reading poly, must have digit(s) after '^'.                 
+ in reading poly, can't have coefficient or term equal 0.       
+ in reading poly, misuse of '/'.                                
+in reading poly, without Laurent, negative exponents illegal.  
+ can't specify negative exponent if not in Laurent.             
+ in Rcoef(Numer(<var>) or (Denom(<var>), <var> must exist.    
+ expected "t^n + ...", where ... has no negative exponents.     
+ can't cancel; no such polynomial variable name.                
+ can't cancel within an array expression.                       
+ degree of modding polynomial must be >= 2.                     
+ in array exponential, must have square matrix.                 
+ in reading a matrix,  data is not in a rectangular array.      
+ can evaluate polynomial at only square matrices.               
+ the system array is empty.                                     
+ can't directly pass, change, or cancel the system array.       
+ expected '(' in built-in function.                             
+ expected '[' in built-in function needing matrix input.        
+ specified row or column is out of bounds for this array.       
+ with Switchrow, can't restrict rows in subarray.               
+ with Switchcol, can't restrict cols in subarray.               
+ can't specify subarray to this array function.                 
+ Hermite, MHermite, Smith, and MSmith need rational mode.       
+ argument to Iszero must be array.                              
+ in Rcoef(...) = <source>, the target is not a polynomial.      
+ can't apply this function to non-polynomial.                   
+ with total evaluate, the matrix has too many entries.          
+ Powermod in modularmode, third arg. (if given) must be poly.   
+ detcutoff must be scalar, not polynomial.                      
+ expected 'od' to end definition of for-loop control.            
+ can't do this to Sparse array(s) [of these dimensions].        
+ expected a comma followed by a monomial.                       
+ with total evaluate, there are too many arguments.             
+ Trace can only be applied to a square matrix.                  
+ expected "t^n + ...", not a number.                            
+ expected polynomial, not rational number or quolynomial.       
+ expected monic polynomial here.                                
+ can't use Laurent polynomial here.                             
+ That polynomial var. is already marked for modding.            
+ expected -<var> when cancelling poly mod-out on <var>.         
+ auxiliary primes must be integers less than 65535.            
+ expected comma ',' in list of arguments.                       
+ arguments to GCD must be polynomials or integers.              
+ in reading poly, can't have 0 for exponent .                   
+ mod and div are not defined for laurent polynomials.           
+ expected an argument for a result parameter.                   
+ improper argument for a result parameter.                      
+ can only purge arrays or functions.                            
+ maximum allowed name length is 255.                            
+ a quoly denominator has become 0.                              
+For neg expons, in poly-mod-out with t^n+ c = 0, c must be ±1.  
+ can apply Chpoly or Minpoly to square matrix only.             
+ must first attach a poly var to call this function.            
+ 'else' can only follow 'if ... then ...' .                     
+ expected expression in parentheses after 'else'.               
+expected 'then' or 'do'.                             
+ expected '[' after % or %[...].                                
+ expected ']' after %[...                                       
+ expected number for coordinate in %[...].                      
+ uninitialized entry in %.                                      
+array index out of bounds in % (legal: 1 [0] to 400000 [399999])
+ system function is undefined.                                  
+ increments in increment command must be integers.              
+in increment, this value is too big (>= 2^28) in abs. value.      
+ can't invoke system function from a function.                  
+ expression is too complex for Integer expression.              
+ expected number for this expression.                           
+ too many polynomial variables.                                 
+ illegally placed Compile statement.                            
+ too many (>100) variable names for compiler.                  
+ expected ',' or ';' or ')' in Compile command.                 
+ expected variable name in list of arguments.                   
+ duplicate variable in Compile list.                            
+ can't compile the system function.                             
+ can't do this in modularmode in this version of Fermat.        
+ It's too late to specify  **  now!                             
+ duplicate name in parameter list.                              
+ The given Chpoly bound did not evaluate to a number.           
+ in Bin(n,r), n is too big (>30) for supressed modular arith.   
+in n!, n is too large (>13) for supressed modular arithmetic.  
+ Det or Adjoint must be applied to a square matrix.             
+ can't do this to a Sparse array.                               
+ can't change the system variable or system array.              
+ can't use [set] subarray with [to] a Sparse array.             
+ matrix has too many rows for Minpoly (limit 5000).             
+ expected integer for array coordinate.                         
+ can't Compile an array parameter bound to a Sparse array.      
+ must enter a genuine name for file.                            
+ dimensions of Sparse array and ordinary array must match.      
+ Sparse array is too big to become ordinary array.              
+ expected ']' during/at end of Sparse read.                     
+ Minpoly must be applied to a square Sparse matrix.             
+ matrix needs at least 8 rows for Minpoly.                      
+ matrix must consist entirely of integers for Minpoly.          
+ expected '[' while reading data in sparse matrix format.       
+ can't call Minpoly while modular mode is off.                  
+ expected 0, 1, 2, or 3 for second argument in Minpoly.         
+ can't use subarray here.                                       
+ can't use Sparse array here.                                   
+ to use here, array must consist of all numbers.                
+ must specify  &o  (for output) here.                           
+ &o is only appropriate within a display command.               
+ No output file has been specified yet.                         
+ wrong syntax for &p within a function; see manual.             
+during read of Sparse matrix, array coordinate is not integer. 
+ can't be a field; a lower poly var is not marked as such.      
+ Compiled array references must be of form  x[<number>].        
+ too many auxiliary primes.                                     
+ Comma makes no sense when cancelling.                          
+ auxiliary primes only make sense if you first specify field.  
+ Laurent and poly-mod-out, unless field, are incompatible.      
+ second auxiliary number must be between 10 and 20000.          
+ specified depth is inappropriate.                              
+ expected matching ']' or ')' to end Sigma or Prod.             
+ can't Raise this quoly; level is too high.                     
+ Codegree makes no sense with an array, only a polynomial.      
+ can't Lower this quoly to requested depth.                     
+ argument to Var corresponds to no variable.                    
+ with Bin(n,r) in integermode, maximum n is 150.                
+ arguments to Divides must be numbers or polys.                 
+ Divides only works in rational mode or with prime modulus.     
+ expression must evaluate to a poly var.                        
+ Third argument to Deriv is negative, which is nonsense.        
+ must be in modularmode to do this.                             
+ must specify '+' or '-' after &C.                              
+ for Powermod, first arg. must be number or polynomial.         
+ second arg. to Powermod must be nonnegative integer here.      
+ for Powermod, third arg. must be positive number or poly.      
+ |argument| must be < 2^63 - 1.                                 
+ with modularmode, the default modder (modulus) must be prime.  
+ for Powermod, can't mod out by an invertible poly.             
+ Powermod, rational mode, first arg. number => need modder.     
+ modulus must be prime for this function.                       
+ overflow occurred in increment command.                        
+ first auxiliary number must be between 300 and 4583.          
+ can't use alias % here.                                        
+ can't use alias % here because dims. of arrays do not match.   
+can't factor; lower level poly vars have mod-out without field.
+ can't factor; poly has more than one var above field depth.    
+ level number must be >= 0 and <= # of vars below field depth.  
+ argument to PRoot is not invertible.                           
+ can't invoke C or Pascal in this version of Fermat.            
+ expected colon ":" or semicolon ";" after &v.                  
+ not enough points to interpolate; factor has too many roots.   
+ given factor doesn't divide the determinant.                   
+ only one auxiliary matrix with Pseudet.                        
+ argument must be a monomial.                                   
+to Sqfree(x) with a deriv of x = 0, need all coeffs invertible.
+Only one invocation of this function is allowed at a time.     
+Sparse minors method needs a square array of side <= 10001.    
+ array must have only polys, not numbers or quolynomials.       
+ can't use ^ in Laurent with this function.                     
+ can't use ^ with this function.                                
+ number is too large in absolute value (>= 2^28).               
+ argument to Coef must be either a number or a poly var.         
+ unsuitable beginning (left side) for assignment statement.      
+ expected '=', '+', or '-' in an assignment statement.           
+ can't pass Sparse array entry to value-result parameter.        
+ illegal 'fi', 'od', or 'else'.  Extra semicolon?                
+ third argument not allowed for Mfact.                          
+ with Mfact, the monomial can't have negative expons.             
+ array must have only polys or numbers, not quolynomials.       
+ must supply first two arguments (L and A) for FFLU.              
+ last two arguments only make sense with FFLUC.                   
+ at most two auxiliary matrices with Redrowech.                 
+ rank of maximal minor is too large; can't store the indices.   
+ must provide exactly four matrix names with Minors.              
+arrays giving row and col coords cannot be sparse arrays.            
+ with Minors, array giving row or col coords is empty!          
+ first array argument to Minors must be sparse.                  
+ arrays giving row and col coords must contain only integers.   
+row or col coord is out of bounds for first argument to Minors.   
+This function is only for sparse matrices.                          
+ expected 'char' after a colon ':' after array input.           
+ in sparse-column for-loop, array must be sparse.                       
+sparse-column for-loop not allowed here.                        
+ after * to signal use of storage, must have variable name.                        
+ in a#(x=[...]) you must use the name of an existing array.                    
+ */, +/, -/ are not supported.                                                    
+ second / makes no sense in integer mode.                                 
+ expected digits for decimal constant.                                     
+ Sparse was applied to a matrix with array parameter alias.                       
+ With Mfact, the monomial can't have negative exponents.                     
+Specified poly variable is part of the coefficient field.              
+ argument to Content corresponds to no poly variable.                            
+ input must be >= 0 and < 1230.
+ This function makes no sense under the finite field of 256. 
+EGCD of base field values makes no sense.    
+for EGCD, polynomials must involve same variable.   
+&_m(..) cannot begin an expression.  Use _(..) or (&_m(..)).   
+fourth argument to Det (the power) must be >= 2 in abs. value.     
+can't extract pth root (p = modulus); this poly level not a field. 
+can't change to rational ground ring; you did &J or &P mod p.      
+Char=2, Det, all vars mod x^2+.., LaGrange: all coeffs must be 1.  
+expected 'P' to signal modding polynomial.                         
+after cancelling, makes no sense to mod out.                       
+with combined &J,P, modding poly must be of new var just attached. 
+expected ',' while processing change of ring, local.               
+illegal number found while reading sparse array.                  
+can't adjoin at bottom while poly-modding.                        
+can't use combined &J,P if adjoining at bottom.                   
+must use imperative form to adjoin at bottom.                     
+after * to signal use of storage, can't have poly variable name.  
+number of primes must be at least 2.                              
+an entry in a sparse matrix would become 0. It is now 1.          
+value must be an integer >= 0.                                    
+value must be an integer >= 1.                                    
+degree of first arg. to Splice must be < third arg.               
+with Sort, uninitialized entrys not allowed in first column.      
+in Sort or Synth of sparse array, first column must be nonzero.   
+can't Sort this sparse array, a sort is already in progress.      
+can't Sort this sparse array, too many rows (> 2048*5000).        
+expected 0, 1, or 2 for this integer.                             
+no such file name; all reading stopped.                           
+can't use this algorithm, matrix has too many rows.               
+can't use heuristic 6; matrix is not invertible.                  
+must be at top level to do this.                                  
+too many mono warnings.  Restart with a larger monolength.        
+109
+Array
+0
+Bin
+*1
+Cfunc
+2
+Chpoly
+3
+Codeg
+*4
+Coef
+*5
+Colreduce
+6
+Cols
+*7
+Content
+8
+Deg
+*9
+Denom
+10
+Deriv
+11
+Det
+*12
+Det_
+13
+Diag
+*14
+Divides
+15
+EGCD
+16
+Equal
+17
+Equalneg
+18
+FFLU
+19
+FFLUC
+20
+Factor
+21
+False
+22
+Flcoef
+23
+Func
+24
+Function
+25
+GCD
+26
+Hampath
+27
+Height
+28
+Hermite
+29
+Irred
+30
+Isprime
+31
+Iszero
+32
+Killden
+33
+LCM
+34
+Lcoef
+35
+Level
+36
+Lmon
+37
+Log2
+38
+Lower
+39
+Lterm
+*40
+MPowermod
+41
+MSmith
+42
+Mcoef
+43
+Mfact
+44
+Minors
+45
+Minpoly
+46
+Modmode
+47
+Modulus
+48
+Mono
+49
+Mons
+50
+Move
+51
+Nlcoef
+52
+Nmcoef
+53
+Normalize
+54
+Ntcoef
+55
+Numb
+56
+Numcon
+57
+Numer
+58
+Numvars
+59
+PDivides
+60
+PRoot
+61
+Phash
+62
+Poly
+63
+Powermod
+64
+Prime
+65
+Prod
+*66
+Pseudet
+67
+RRand
+*68
+Raise
+69
+Rand
+*70
+Rat
+71
+Rcoef
+72
+Redrowech
+73
+Remquot
+74
+Return
+75
+Reverse
+76
+Rname
+77
+Rowreduce
+78
+SDet
+*79
+SDivide
+80
+STrans
+81
+Sigma
+*82
+Smith
+83
+Sort
+84
+Sparse
+85
+Splice
+86
+Split
+87
+Sqfree
+88
+Sqrt
+*89
+Sumup
+90
+Swap
+91
+Switchcol
+92
+Switchrow
+93
+Synth
+94
+Terms
+95
+Termsf
+96
+Time
+97
+Toot
+98
+Totdeg
+99
+Trace
+100
+Trans
+*101
+True
+102
+Var
+*103
+Vars
+104
+X
+105
+ZZ1
+106
+ZZ2
+107
+ZZ3
+108
+Zncoef
+109
