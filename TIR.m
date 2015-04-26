@@ -16,6 +16,7 @@ Protect[TIRIR];
 TIRDimension::usage="Dimension in TIR, Default is D";
 TIRFV::usage="Four Vector in TIR, TIRFV[p,m] with p Momentum and m Lorentz Index";
 TIRSP::usage="Scalar Product in TIR, TIRSP[p,q] with p and q Momentum";
+ClearTIRSP::usage="Remove All Asigned Scalar Product";
 TIRMT::usage="Metric Tensor in TIR, TIRMT[m,n] with m and n Lorentz Index";
 TIRIR::usage="TIR IRreducible Expression";
 TIR::usage="TIR: Tensor Index Reduce, TIR[{{q1,m1},{q2,m2},...},{p1,p2,...}] with qi Loop Momentum and pi External Momentum";
@@ -42,7 +43,7 @@ Begin["`Private`"];
 
 
 (* ::Subsection:: *)
-(*Rules for SP/MT/FV*)
+(*TIR-SP/MT/FV*)
 
 
 SetAttributes[TIRMT,Orderless];
@@ -72,7 +73,7 @@ TIRFV[p_+q_,mu_]:=TIRFV[p,mu]+TIRFV[q,mu]
 TIRSP[p_,q1_+q2_]:=TIRSP[p,q1]+TIRSP[p,q2]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*TIR Core*)
 
 
@@ -263,6 +264,14 @@ TIRDimension=D;
 TIRF=TIRFermat;
 TIRTogether[exp_]:=Collect[exp,_TIRFV,Together];
 TIRDenominator[ps_List]:=Det[Outer[TIRSP,ps,ps]];
+
+
+SPInitlDownValues=DownValues[TIRSP];
+SPInitlUpValues=UpValues[TIRSP];
+ClearTIRSP[]:=With[{},
+DownValues[TIRSP]=SPInitlDownValues;
+UpValues[TIRSP]=SPInitlUpValues;
+];
 
 
 End[];
