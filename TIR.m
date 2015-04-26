@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*TIR Package*)
 
 
@@ -53,7 +53,7 @@ fcSolve3=HighEnergyPhysics`general`Solve3`Solve3;
 Begin["`Private`"];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*TIR-SP/MT/FV*)
 
 
@@ -73,6 +73,7 @@ TIRFV/:MakeBoxes[TIRFV[p_,mu_],TraditionalForm]:=SuperscriptBox[MakeBoxes[p,Trad
 
 TIRMT/:TIRMT[mu_,mu_]:=TIRDimension;
 TIRMT/:TIRMT[mu_,nu_]^2:=TIRDimension;
+TIRMT/:TIRMT[mu1_,nu_] TIRMT[nu_,mu2_]:=TIRMT[mu1,mu2]
 TIRMT/:TIRMT[mu_,nu_] TIRFV[p_,mu_]:=TIRFV[p,nu]
 
 
@@ -84,7 +85,7 @@ TIRFV[p_+q_,mu_]:=TIRFV[p,mu]+TIRFV[q,mu]
 TIRSP[p_,q1_+q2_]:=TIRSP[p,q1]+TIRSP[p,q2]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*TIR Core*)
 
 
@@ -164,18 +165,18 @@ Return[tmp];
 lpi=First[lpi];
 blist=SymmetricTensorBasis[ep,Part[lpi,All,2]];
 eq2=Map[Function[b,Expand[blist b,_TIRFV|_TIRMT]],blist];
-On[Assert];Assert[FreeQ[eq2,_TIRFV|_TIRMT]];
 eq1=Times@@Map[Function[xpi,
 Function[{x1,x2},TIRFV[x1,x2]]@@xpi
 ],lpi];
 eq1=Map[Function[b,Expand[eq1 b,_TIRFV|_TIRMT]],blist];
+On[Assert];Assert[FreeQ[{eq1,eq2},_TIRFV|_TIRMT]];
 tmp=TIRLinearSolver[eq2,eq1];(*Use Different Linear Solver*)
 tmp=tmp.blist;
 Return[tmp];
 ];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*TIRLinearSolver*)
 
 
@@ -298,7 +299,7 @@ End[];
 EndPackage[];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*TIRFC*)
 
 
