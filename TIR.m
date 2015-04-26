@@ -1,6 +1,6 @@
 (* ::Package:: *)
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*TIR Package*)
 
 
@@ -9,7 +9,7 @@ BeginPackage["TIR`"];
 
 Unprotect[TIRIR];
 Clear[TIRIR];
-TIRIR/:MakeBoxes[TIRIR[lpio_,ep_,dim_],TraditionalForm]:=With[{exp=Apply[Times,Map[Function[mi,TIRFV[mi[[1]],mi[[2]]]],lpio]]},MakeBoxes[exp,TraditionalForm]];
+TIRIR/:MakeBoxes[TIRIR[lpi_,ep_],TraditionalForm]:=With[{exp=Apply[Times,Map[Function[mi,TIRFV[mi[[1]],mi[[2]]]],lpi]]},MakeBoxes[exp,TraditionalForm]];
 Protect[TIRIR];
 
 
@@ -19,10 +19,11 @@ TIRSP::usage="Scalar Product in TIR, TIRSP[p,q] with p and q Momentum";
 ClearTIRSP::usage="Remove All Asigned Scalar Product";
 TIRMT::usage="Metric Tensor in TIR, TIRMT[m,n] with m and n Lorentz Index";
 TIRIR::usage="TIR IRreducible Expression";
-TIR::usage="TIR: Tensor Index Reduce, TIR[{{q1,m1},{q2,m2},...},{p1,p2,...}] with qi Loop Momentum and pi External Momentum";
+TIR::usage="TIR: Tensor Index Reduce, TIR[lpi:{{q1,m1},{q2,m2},...},ep:{p1,p2,...}] with qi Loop Momentum and pi External Momentum";
 
 
 TIRLinearSolver::usage="The Linear Equation Solver in TIR: TIRFermat, TIRMMA, TIRFCS3";
+TIRFermatPath::usage="TIRFermatPath: Fermat Path Used in TIR";
 TIRFermat::usage="Linear Equation Solve in TIR Using Fermat";
 TIRMMA::usage="Linear Equation Solve in TIR Using Mathematica LinearSolver";
 TIRFCS3::usage="Linear Equation Solve in TIR Using Solve3 from FeynCalc";
@@ -31,7 +32,7 @@ TIRFCS3::usage="Linear Equation Solve in TIR Using Solve3 from FeynCalc";
 TIRTogether::usage="TIRTogether: Collect TIRFV Terms in TIR";
 TIRDenominator::usage="TIRDenominator[{p1,p2,...}] - Gram Determinant for External Momenta {p1,p2,...}";
 TIRDenominator::Zero="The TIRDenominator is ZERO, and TIR can not determinate the Reduction Uniquely!";
-TIRFermatPath::usage="TIRFermatPath: Fermat Path Used in TIR";
+TIRCheck::usage="TIRCheck[res,TIR[lpi,ep]]: Check the TIR Result is Correct or Not, with HoldRest Attribute.";
 
 
 SymmetricTensorBasis::usage="SymmetricTensorBasis[ps_List,li_List] with ps External Momentum List and li Lorentz Index List"
@@ -42,6 +43,11 @@ Clear[fmMB,fmvD,"fmv@"];
 Protect[fmMB,fmvD,"fmv@"];
 fmMB::usage="MB-Matrix M and Vector B in Fermat";
 fmvD::usage="The TIRDimension in Fermat";
+
+
+(*The Solve3 from FeynCalc Will Be Used in TIRFCS3*)
+(*FeynCalc Should be Loaded Before TIR*)
+fcSolve3=HighEnergyPhysics`general`Solve3`Solve3;
 
 
 Begin["`Private`"];
@@ -133,15 +139,15 @@ Return[blist];
 Clear[TIR];
 TIR[lpi_List,ep_List]:=TIR[{lpi},ep];
 TIR[lpio:{_List..},ep_List]:=Module[{lpi,eq1,eq2,blist,tmp,lpr,VF},
-If[TIRDenominator[ep]===0,Message[TIRDenominator::Zero];Return[TIRIR[lpio,ep]]];
-ClearSystemCache[];
 lpi=lpio;
+If[TIRDenominator[ep]===0,Message[TIRDenominator::Zero];Return[TIRIR[lpi,ep]]];
+ClearSystemCache[];
 lpi=Sort[lpi,Function[{e1,e2},Order[Part[e1,1],Part[e2,1]]>0]];
 lpi=SplitBy[lpi,First];
 If[Length[lpi]>1,
 lpr=Union[Flatten[Part[lpi,2;;,All,1]]];
 tmp=TIR[First[lpi],Join[ep,lpr]];
-If[Not[FreeQ[tmp,_TIRIR]],Return[TIRIR[lpio,ep]]];
+If[Not[FreeQ[tmp,_TIRIR]],Return[TIRIR[lpi,ep]]];
 tmp=Expand[tmp,_TIRFV];
 tmp=Distribute[VF[tmp]];
 tmp=tmp//.VF[c_ ex_.]/;FreeQ[c,TIRFV[Alternatives@@lpr,_]]:>c VF[ex];
@@ -152,7 +158,7 @@ ex/.TIRFV[m_,i_]/;MemberQ[lpr,m]:>VF[{{m,i}}]
 tmp=tmp//.VF[x_] VF[y_]:>VF[Join[x,y]];
 tmp=tmp/.VF[VF[x_]]:>VF[Join[Flatten[Part[lpi,2;;],1],x]];
 tmp=tmp/.VF[x_]:>TIR[x,ep];
-If[Not[FreeQ[tmp,_TIRIR]],Return[TIRIR[lpio,ep]]];
+If[Not[FreeQ[tmp,_TIRIR]],Return[TIRIR[lpi,ep]]];
 Return[tmp];
 ];
 lpi=First[lpi];
@@ -169,11 +175,11 @@ Return[tmp];
 ];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*TIRLinearSolver*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*TIRMMA*)
 
 
@@ -181,19 +187,28 @@ Clear[TIRMMA];
 TIRMMA[m_,b_]:=LinearSolve[m,b];
 
 
-(* ::Subsubsection:: *)
-(*TIRFC*)
+(* ::Subsubsection::Closed:: *)
+(*TIRFCS3*)
 
 
-Clear[TIRFC3];
-TIRFC3[m_,b_]:=LinearSolve[m,b];
+Unprotect[xc];Clear[xc];Protect[xc];
 
 
-(* ::Subsubsection:: *)
+Clear[TIRFCS3];
+TIRFCS3[m_,b_]:=Module[{xcs,tmp},
+xcs=Table[xc[in],{in,Length[b]}];
+tmp=Map[(#==0)&,m.xcs-b];
+tmp=fcSolve3[tmp,xcs];
+tmp=xcs/.tmp;
+Return[tmp];
+];
+
+
+(* ::Subsubsection::Closed:: *)
 (*TIRFermat*)
 
 
-TIRFermatPath=FileNameJoin[{DirectoryName[$InputFileName],Switch[$OperatingSystem,"MacOSX","ferm64","Linux","ferl64","Windows","ferw32"],Switch[$OperatingSystem,"Windows","ferw.exe",_,"fer64"]}];
+TIRFermatPath=FileNameJoin[{DirectoryName[$InputFileName],Switch[$OperatingSystem,"MacOSX","ferm64","Unix","ferl64","Windows","ferw32"],Switch[$OperatingSystem,"Windows","ferw.exe",_,"fer64"]}];
 
 
 Clear[TIRFermat];
@@ -206,7 +221,7 @@ fvs=Table[Symbol[StringJoin["fmv",ToString[ti]]],{ti,Length[sps]}];
 vars=Union[Cases[{m,b},_Symbol,Infinity]];
 AppendTo[tmp,"&(S=out);"];
 AppendTo[tmp,"&_s;"];
-AppendTo[tmp,"&(_o=1000);"];
+AppendTo[tmp,"&(_o=1000);"];(*http://home.bway.net/lewis/fer64mono.html*)
 AppendTo[tmp,"&(_t=0);"];
 Scan[Function[sym,AppendTo[tmp,StringJoin["&(J=",ToString[sym],");"]]],vars];
 rc=Dimensions[m];
@@ -253,6 +268,22 @@ TIRTogether[exp_]:=Collect[exp,_TIRFV,Together];
 TIRDenominator[ps_List]:=Det[Outer[TIRSP,ps,ps]];
 
 
+SetAttributes[TIRCheck,HoldRest];
+TIRCheck[res_,TIR[lpi_,ep_]]:=Module[{ores,oexp,blist,tmp,VF,sps},
+sps=Cases[res,_TIRSP,{0,Infinity}]//Union;
+sps=Dispatch[Thread[sps->Array[RandomInteger[{1,10000}],Length[sps]]]];
+ores=res//.sps;
+oexp=Apply[Times,Map[Function[mi,TIRFV[mi[[1]],mi[[2]]]],lpi]];
+blist=SymmetricTensorBasis[ep,Part[lpi,All,2]];
+tmp=Distribute[VF[ores-oexp]]//.VF[c_ ex_.]/;FreeQ[c,_TIRFV|_TIRMT]:>c VF[ex];
+tmp=Map[(tmp/.VF[x_]:>Expand[# x,_TIRFV|_TIRMT]/.sps)&,blist];
+tmp=Map[Factor,tmp];
+tmp=If[tmp===Array[0&,Length[tmp]],True,False];
+ClearSystemCache[];
+Return[tmp];
+];
+
+
 SPInitlDownValues=DownValues[TIRSP];
 SPInitlUpValues=UpValues[TIRSP];
 ClearTIRSP[]:=With[{},
@@ -272,12 +303,19 @@ EndPackage[];
 
 
 (* ::Subsection:: *)
+(*TIR2FC*)
+
+
+TIR2FC[exp_]:=FCI[exp//.{TIRMT->MTD,TIRFV->FVD,TIRSP->SPD}]
+
+
+(* ::Subsection:: *)
 (*Distribute*)
 
 
 TIRFC[c_,lp_List,ep_List]/;FreeQ[FCI[c],FCI[FVD[Alternatives@@lp,_]]]:=c;
-TIRFC[Longest[c_] exp_,lp_List,ep_List]/;FreeQ[FCI[c],FCI[FVD[Alternatives@@lp,_]]]:=c TIR[exp,lp,ep];
-TIRFC[Longest[c_.] (exp1_+exp2_),lp_List,ep_List]:=TIR[c exp1,lp,ep]+TIR[c exp2,lp,ep];
+TIRFC[Longest[c_] exp_,lp_List,ep_List]/;FreeQ[FCI[c],FCI[FVD[Alternatives@@lp,_]]]:=c TIRFC[exp,lp,ep];
+TIRFC[Longest[c_.] (exp1_+exp2_),lp_List,ep_List]:=TIRFC[c exp1,lp,ep]+TIRFC[c exp2,lp,ep];
 
 
 (* ::Subsection:: *)
@@ -288,8 +326,9 @@ TIRFC[ex_Times,lp_List,ep_List]/;MatchQ[List@@ex,{FCI@FVD[Alternatives@@lp,_]...
 tmp=ex/.Times[FCI@FVD[lm_,mu_]...]:>VF[{lm,mu}];
 tmp=List@@tmp;
 tmp1=tmp/.VF->Identity;
-tmp=If[UsingFeynCalc,TIDL[tmp1,ep],ex];
-If[tmp===ex,tmp=TIRInternal[tmp1,ep]];
+tmp=TIDL[tmp1,ep];
+If[tmp===ex,tmp=TIR[tmp1,ep]];
+tmp=TIR2FC[tmp];
 Return[tmp];
 ];
 
@@ -298,12 +337,8 @@ TIRFC[ex_,lp_List,ep_List]/;MatchQ[ex,FCI@FVD[Alternatives@@lp,_]]:=Module[{tmp,
 tmp=ex/.FCI@FVD[lm_,mu_]:>VF[{lm,mu}];
 tmp=List@@tmp;
 tmp1=tmp/.VF->Identity;
-tmp=If[UsingFeynCalc,TIDL[tmp1,ep],ex];
-If[tmp===ex,tmp=TIRInternal[tmp1,ep]];
+tmp=TIDL[tmp1,ep];
+If[tmp===ex,tmp=TIR[tmp1,ep]];
+tmp=TIR2FC[tmp];
 Return[tmp];
 ];
-
-
-(*TIRIR2FC[exp_]:=exp/.TIRIR[lpio_,ep_,dim_]:>Apply[Times,Map[Function[mi,
-Pair[LorentzIndex[mi[[2]],dim],Momentum[mi[[1]],dim]]
-],lpio]];*)
