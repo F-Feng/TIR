@@ -38,6 +38,9 @@ TIRCheck::usage="TIRCheck[res,TIR[lpi,ep]]: Check the TIR Result is Correct or N
 SymmetricTensorBasis::usage="SymmetricTensorBasis[ps_List,li_List] with ps External Momentum List and li Lorentz Index List"
 
 
+TIRInfo[]:=Print["Functions Supported in TIR: TIR, TIRDimension, TIRFV, TIRMT, TIRSP, ClearTIRSP, TIRLinearSolver(=TIRFermat/FIRFCS3/TIRMMA),TIRDenominator. To get more informatin, Use ?TIRFunction, e.g., ?TIR"];
+
+
 Unprotect[fmMB,fmvD,"fmv@"];
 Clear[fmMB,fmvD,"fmv@"];
 Protect[fmMB,fmvD,"fmv@"];
@@ -132,6 +135,7 @@ AppendTo[blist,gterm];
 ];
 ];
 blist=TensorSymmetrize[blist,li];
+blist=Map[(VF[Factor[#]]//.VF[c_Integer ex_]:>ex/.VF[ex_]:>ex)&,blist];
 Clear[tmp,gterm,gn];
 Return[blist];
 ];
