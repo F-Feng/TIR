@@ -193,11 +193,12 @@ TIRFC3[m_,b_]:=LinearSolve[m,b];
 (*TIRFermat*)
 
 
-TIRFermatPath=FileNameJoin[{DirectoryName[$InputFileName],Switch[$OperatingSystem,"MacOSX","ferm64","Linux","ferl64"],"fer64"}];
+TIRFermatPath=FileNameJoin[{DirectoryName[$InputFileName],Switch[$OperatingSystem,"MacOSX","ferm64","Linux","ferl64","Windows","ferw32"],Switch[$OperatingSystem,"Windows","ferw.exe",_,"fer64"]}];
 
 
 Clear[TIRFermat];
-TIRFermat[mo_List,bo_List]:=Module[{m,b,sps,fvs,wp,ti,vars,tmp={},line={},rc},
+TIRFermat[mo_List,bo_List]:=Module[{cat,m,b,sps,fvs,wp,ti,vars,tmp={},line={},rc},
+cat=Switch[$OperatingSystem,"Windows","type",_,"cat"];
 {m,b}={mo,bo};
 sps=Cases[{m,b},TIRSP[_,_],{0,Infinity}]//Union;
 fvs=Table[Symbol[StringJoin["fmv",ToString[ti]]],{ti,Length[sps]}];
@@ -216,7 +217,7 @@ Scan[Function[ele,AppendTo[line,StringJoin[ToString[InputForm[ele]],","]]],b];
 line[[Length[line]]]=StringTrim[Last[line],","];
 AppendTo[line,")];"];
 AppendTo[tmp,StringJoin[line]];
-(*AppendTo[tmp,"![fermatmb];"];*)
+(*AppendTo[tmp,"![fermatmb];"];*)(*for Debug Only*)
 AppendTo[tmp,"Redrowech([fmMB]);"];
 AppendTo[tmp,"&(U=1);"];
 AppendTo[tmp,"!(&o,[fmMB]);"];
@@ -226,7 +227,7 @@ AppendTo[tmp,""];
 wp=CreateDirectory[];
 SetDirectory[wp];
 Export["in",tmp,{"Text","Lines"}];
-Run["cat "<>FileNameJoin[{wp,"in"}]<>"|"<>TIRFermatPath];
+Run[cat<>" \""<>FileNameJoin[{wp,"in"}]<>"\"|\""<>TIRFermatPath<>"\""];
 ResetDirectory[];
 Unprotect[fmMB];
 Clear[fmMB];

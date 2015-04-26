@@ -1,0 +1,757 @@
+;; Example of Dixon-EDF. 
+;; See: Heuristics to Accelerate the Dixon Resultant, Mathematics and Computers in Simulation 77, Issue 4, p. 400-407, April 2008.
+;; This example is a system of equations that arises in considering flexibility of quadilaterals, due to Bricard (1896).
+
+;; USE AT YOUR OWN RISK.  no warranty.
+
+;; Robert H. Lewis, August 2008
+
+;; Note added Jan 2, 2012: These procedures may fail if you are working over a quotient field over Z.  (This is called "polymodding".)  The problem, noted in the manual,
+;; is that g = GCD(a,b) may not divide into a or b, due to integer coefficients.  In that case, the statement SDivides(g, a) will fail and set a to 1. 
+;; To illustrate, try some examples when molding out x^2 - 3. (There is no problem when polymodding over Z/p.)
+
+&(e = 1);
+&(m = 1);
+&(a = 1);
+&(D = 10);
+&(t = 1);
+&_l;
+
+;; adjoin the symbolic variables.  parameters first.
+&(J = b1);  
+&(J = c1);
+&(J = b2);   
+&(J = c2);
+&(J = b3);  
+&(J = c3);   
+
+&(J = a1);
+&(J = d1);
+&(J = e1);
+&(J = a2);
+&(J = d2);
+&(J = e2);
+&(J = a3);
+&(J = d3);
+&(J = e3);
+&(J = t3);
+&(J = t2);
+&(J = t1);
+
+
+;; Dixon is not a builtin command in Fermat.  These functions implement it.
+;; To use this file of Fermat functions to run Dixon:
+;; - start Fermat, read this file with &r. All the functions and arrays will be loaded. 
+;;   Reading stops at the &x command (see manual).  ![d will display the array [d], holding the equations.
+;; - Type &r again. That will resume reading, executing the function Ma, which invokes Dixon 
+;;   on the array [d], containing the three equations. Since there are three equations, the
+;;   two highest variables (last added above; i.e. t1 and t2) will be eliminated.  Ma stops with
+;;   the creation of the matrix [m4].  It will be 8x8. 
+;; - The resultant is a factor of Det[m4].  Type s := Det[m4]:  The determinant will be 
+;;   computed by minors because 8 <= 10, and the command &(D = 10) was invoked above.
+;; - When you have s, invoke Sqfree(s, [a]) to compute the square-free factors and put them in
+;;   a newly created array [a]. [a] will be 3x2.  The three factors are a[1], a[2], a[3] (i.e,
+;;   a[1,1], a[2,1], a[3,1].  Fermat stores array in column-major order.  You may access any
+;;   array as if it were linear.  So a[4] is the same as a[1,2].), and their exponents are
+;;   a[4], a[5], a[6].  You should find the desired answer in a[2], with 5685 terms.  Note
+;;   that this does not prove that a[2] is irreducible.
+;; - Alternatively, you may type Fin(1,8), then DC.  This invokes the function Fin ("finish"), 
+;;   which implements an idea I've developed called EDF to find the resultant without computing the 
+;;   entire determinant of [m4].  When it finishes, the array [num] will contain nn factors of
+;;   the determinant; usually one of them is the resultant.  Here we get nn=10, and num[nn]
+;;   is the poly of 5685 terms.  The product Prod<i=1,9>[ num[i] ] is the so called 
+;;   "spurious factor."
+
+;; There are more subtleties than that!  Explore!
+;; For example, instead of just running Fin(1,n) where m4 is nxn, consider this:
+;; for i = 1, n do Fin(i,i); DC; Pre; KD; DC od
+
+
+;; Main is not as efficient as Mai.
+Function Main(dd,i,j,n) =
+   { Set up the Dixon method with the entries in array [dd].}
+   n := Deg[dd] - 1;
+   { adjoin n auxiliary variables.  Changed May 1998. designed for n=2.}
+   Array nam[2];
+   nam[1] := 't';
+   for i = 1, n do
+      nam[2] := i + 96;
+      &(J = [nam])
+   od;
+   Dix([dd]);
+   { We now have the first Dixon matrix, [m].    }
+   dm := Numer(Det[m]);
+   for i = 1 to n do
+      SDivide(Var(i) - Var(i + n), dm)
+   od;
+   { Now distribute the coefficients of dm to the second matrix, [m1].}
+   Set2(n);
+   { [m1] now exists.  Next, create arrays [rowlst] and [colst].}
+   Extract;
+   { Now create the third matrix, [m2], by pulling out the nonzero rows and cols
+     using [rowlst] and [colst].    }
+   Array m2[Deg[rowlst], Deg[collst]];
+   Mynors([m1], [rowlst], [collst], [m2]);
+   { Cancel stuff   }
+   for i = 1, n do
+      nam[2] := i + 96;
+      &(J = -[nam])
+   od;
+   @(dm, [rowlst], [collst], [nam], [collist], [rowlist], [m1]).;
+
+;; Mai is not as efficient as Ma.
+ Function Mai(dd,i,j,n) =
+   { Set up the Dixon method with the entries in array [dd].}
+   n := Deg[dd] - 1;
+   { adjoin n auxiliary variables.  Changed May 1998. designed for n=2.}
+   Array nam[2];
+   nam[1] := 't';
+   for i = 1, n do
+      nam[2] := i + 96;
+      &(J = [nam])
+   od;
+   Dix([dd]);
+   { We now have the first Dixon matrix, [m].    }
+   dm := DMin([m], n);
+   { Now distribute the coefficients of dm to the second matrix, [m1].}
+   Set2(n);
+   { [m1] now exists.  Next, create arrays [rowlst] and [colst].}
+   Extract;
+   { Now create the third matrix, [m2], by pulling out the nonzero rows and cols
+     using [rowlst] and [colst].    }
+   Minors([m1], [rowlst], [collst], [m2]);
+   { Cancel stuff   }
+   for i = 1, n do
+      nam[2] := i + 96;
+      &(J = -[nam])
+   od;
+   @(dm, [rowlst], [collst], [nam], [collist], [rowlist], [m1]).;
+
+;; this is the best main driver to run Dixon.
+Function Ma(dd,n,i,j) =
+    { Set up the Dixon method with the entries in array [dd].}
+    n := Deg[dd] - 1;
+    { adjoin n auxiliary variables.  Changed May 1998. designed for n=2.}
+    Array nam[2]; 
+    nam[1] := 't'; 
+    for i = 1, n do
+       nam[2] := i + 96;
+       &(J = [nam])
+    od; 
+    Dix([dd]);
+    [u] := [m];
+    for i = n+1, 2, -1 do
+       [u[i,]] := [u[i,]] - [m[i-1,]];
+       for j = 1, n+1 do
+          SDivide(Var(i-1) - Var(i-1 + n), u[i,j])
+       od
+    od;
+    Sparse[u];
+    dm := Det[u];
+    !!(Terms(^dm));
+    { Now distribute the coefficients of dm to the second matrix, [m1]. Call Setup or Set2. }
+    Setup(n); 
+    { [m1] now exists.  Next, create arrays [rowlst] and [colst].}
+    Extract; 
+    { Now create the third matrix, [m2], by pulling out the nonzero rows and cols
+      using [rowlst] and [colst].    }
+    Minors([m1], [rowlst], [collst], [m2]);
+    { Cancel stuff   }
+    for i = 1, n do
+       nam[2] := i + 96;
+       &(J = -[nam])
+    od; 
+    @(dm, [rowlst], [collst], [nam], [collist], [rowlist], [m1]). ; 
+
+ Function NotzerR(r,j) =
+   for j = 1, col do
+      if m1[r,j] <> 0 then
+         Return(1)
+      fi
+   od;
+   Return(0).;
+
+ Function SNotzerR(r,j) =
+   for j = [m1]r do
+      Return(1)
+   od;
+   Return(0).;
+
+Function Mynors(matrix1,xx,yy,matrix2,i,j,cols) =
+   cols := Deg[yy];
+   for i from 1 to Deg[xx] do
+      for j from 1 to cols do
+         matrix2[i,j] := matrix1[xx[i],yy[j]]
+      od
+   od.;
+
+Function DMin(m, s; n, i, j, p, sum) =
+   { recursive det by minors with dividing known factors.  Aug 2002 }
+   { s is the number of vars being eliminated }
+   n := Cols[m];
+   p := Var(s-n+2) - Var(2*s-n+2);
+   if n = 2 then
+      (m[1,1]*m[2,2] - m[1,2]*m[2,1])\p
+   else
+      Array r[n-1], c[n-1], next[n-1,n-1];
+      for j = 2,n do
+         r[j-1] := j
+      od;
+      sum := 0;
+      for i= 1, n do
+         for j=1,i-1 do
+            c[j] := j
+         od;
+         for j=i+1, n do
+            c[j-1] := j
+         od;
+         Mynors([m], [r], [c], [next]);
+         if n = s+1 then
+            !!i
+         fi;
+         sum := sum + (-1)^(i-1)*m[1,i]*(DMin([next],s)\p)
+      od;
+      @([r], [c], [next]);
+      sum
+   fi.;
+
+;; Use this one when [m4] is very large and dense.  else use Setup.
+Function Set2(n,time1,time,i,j,k,za,rc,cc) =
+   { n is the number of variables.  Create and fill
+     the array [m1]. Aug 2002.                   }
+   !!' Starting Setup2 Function ';
+   time1 := &T;
+   Array deg[2n];
+   for i = 1 to 2n do
+      deg[i] := Deg(^dm, i)
+   od;
+   ![deg;
+   !;
+   rows := Prod < i = 1, n > [deg[i]+1];
+   cols := Prod < i = n + 1, 2n > [deg[i]+1];
+   Array m1[rows,cols] Sparse;
+   Array prodexp[2n];
+   for i = 1, n do
+      prodexp[i] := Prod<j=1,i-1>[ deg[j]+1 ]
+   od;
+   for i = n+1, 2n do
+      prodexp[i] := Prod<j=n+1,i-1>[ deg[j]+1 ]
+   od;
+   Mons(dm, [mon]);
+   { place each monomial in dm in the right spot in [m1] }
+   for i = 1 to Deg[mon] do
+      za := mon[i];
+      rc := 1 + Sigma<j=1,n> [ Deg(za,Var(j))*prodexp[j] ];
+      cc := 1 + Sigma<j=n+1,2n> [ Deg(za,Var(j))*prodexp[j] ];
+      for k=1,2n do
+         za := za#(Var(k)=1)
+      od;
+      m1[rc,cc] := m1[rc,cc] + za
+    od;
+   @[deg];
+   !!' Done Setup Function '.;
+
+Function LastOK(n,i) =
+   for i from 1 to 12 do
+      if x[n,i] = 0 then
+         Return(0)
+      fi
+   od;
+   Return(1).;
+
+Function Cont(xx,n,yy) =     
+   yy := xx#(Var(n) = Var(1));
+   Return(Content(yy)).;
+
+Function M(m,k,i,j,n,g,xx,fg,ok) =
+   { improved May 6, 2002, sparse version Aug 2002 }
+   n := Cols[m];
+   for i = k, n do
+      if i = k then
+         g := 0
+      fi;
+      { else use previous g. It is usually correct! }
+      fg := 1;
+      for j = [m]i do
+         g := GCD(g, Numer(m[i,j]));
+            if Equal(g, one) then
+               & >
+            fi
+      od;
+      if i > k and g <> 1 then
+         for j = [m]i do
+            xx := Denom(m[i,j]);
+            Killden(m[i,j]);
+            SDivide(g, m[i,j]);
+            { use new // command }
+            m[i,j] := *m[i,j]//*xx
+         od
+      fi;
+      if i > k then
+         { above g might not be whole answer   }
+         fg := g;
+         g := 0;
+         for j = [m]i do
+             g := GCD(g, Numer(m[i,j]));
+               if Equal(g, one) then
+                  & >
+               fi
+         od
+      else
+         { fg means first g  }
+         fg := 1
+      fi;
+      j := Terms(^g) + Terms(fg) - 1;
+      if g <> 1 and g <> 0 then
+         for j = [m]i do
+            xx := Denom(m[i,j]);
+            Killden(m[i,j]);
+            SDivide(g, m[i,j]);
+            m[i,j] := *m[i,j]//*xx
+         od
+      fi;
+      g := g *fg;
+      if g <> 1 and g <> 0 then
+         nn :+;
+         num[nn] := g
+      fi;
+      { NOW multiply through by lcm[i]!  }
+      if lcm[i] <> 1 then
+         for j = [m]i do
+            xx := lcm[i];
+            SDivide(Denom(m[i,j]), xx);
+            Killden(m[i,j]);
+            { use space saving command, * }
+            m[i,j] := *m[i,j]**xx
+         od
+      fi
+   od.;
+
+Function Fill(i,j,k) =
+   k := Cols[m4];
+   for i = 1, k do
+      for j = 1, k do
+         m4[i,j] := m2[c[1,i],c[2,j]]
+      od
+   od.;
+
+Function M3(m,k,i,j,n,h) =
+   { improved May 3, 2002, sparse version Aug 2002    }
+   n := Cols[m];
+   for i = k, n do
+      lcm[i] := 1;
+      for j = [m]i do
+         SDivide(GCD(lcm[i], Denom(m[i,j])), lcm[i]);
+         { use space saving command, * }
+         lcm[i] := *lcm[i]*Denom(m[i,j])
+      od;
+      { Do not multiply the row by lcm[i]! M will.   }
+      if lcm[i] <> 1 then
+         cnt :+;
+         den[cnt] := lcm[i]
+      fi
+   od.;
+
+Function NN(i) =
+   for i = nn, 1,  - 1 do
+      if num[i] or num[i] = - 1 then
+         num[i] :=  - 1;
+         nn:-
+      else &>
+      fi
+   od.;
+
+Function Doub(m,i,dim) =
+   { assume dim is even      }
+   dim := Deg[m];
+   !!'Doing Doub';
+   while i < dim do
+      i:+;
+      m[i] := *m[i]**m[i+1];
+      m[i+1] := 1;
+      i:+
+   od;
+   Con([m]).;
+
+Function Dix(dd,i,j,k,n,p) =
+   { Changed May 1998   }
+   n := Deg[dd];
+   Array m[n,n];
+   for i from 1 to n do
+      for j = 1, n do
+         if i = 1 then
+            m[i,j] := dd[j]
+         else
+            k := i + n - 2;
+            m[i,j] := m[i-1,j]#(Var(k) = Var(i - 1))
+         fi
+      od
+   od.;
+
+Function Disp3(n,m,i,j) =
+   for i = n, m do
+      for j = n, m do
+         if Equal(m4[i,j], zer) then
+            !' 0'
+         else
+            !(Terms(^m4[i,j]))
+         fi
+      od;
+      !
+   od.;
+
+Function Fin(m,n,i,j,h) =
+   M3([m4],1);
+   M([m4],1);
+   STrans[m4];
+   M3([m4],1);
+   M([m4],1);
+   STrans[m4];
+   for i = m, n do
+      Pseudet([m4], , i);
+      !!(i, ' ', nn, ' ', cnt);
+      M3([m4], i);
+      M([m4], i);
+      for j = 11*n\12 + 1, n do
+         if Terms(lcm[j]) > 5 then
+            !!Terms(lcm[j])
+         fi
+      od;
+      if i > 50 and i|3 then
+         NN;
+         h := Con([den]);
+         cnt := cnt - h;
+         if h > 0 then
+            !!('first cnt now ', cnt, ' ', h)
+         fi
+      fi;
+      PDenom;
+      !!'end PDenom';
+      PDenom2;
+      if i|10 then
+         DoCon;
+         !!'did DoCon';
+         if nn > 5000 then
+            Doub([num])
+         fi;
+         if cnt > 5000 then
+            Doub([den])
+         fi
+      fi;
+      !!('****** finished ', i)
+   od.;
+
+
+Function Disp(n,i,j) =
+   for i = 1, n do
+      for j = 1, n do
+         if Equal(m4[i,j], zer) then
+            !'0 '
+         else
+            !'* '
+         fi
+      od;
+      !
+   od.;
+
+Function Con(m,s,t,c,dim) =
+   { Consolidate, remove 1s. careful not to count a 1 twice!!      }
+   { Hence the trick of writing -1 instead of 1      }
+   dim := Deg[m];
+   while True do
+      while True do
+         s:+;
+         if s > dim then
+            Return(c)
+         else
+            if m[s] = 0 then
+               Return(c)
+            fi
+         fi;
+         if m[s] or m[s] = - 1 then
+            & >
+         fi
+      od;
+      t := s;
+      while True do
+         t:+;
+         if t > dim then
+            Return(c)
+         else
+            if m[t] = 0 then
+               Return(c)
+            fi
+         fi;
+         if m[t] <> 1 and m[t] <> - 1 then
+            & >
+         fi
+      od;
+      if m[s] then
+         c:+
+      fi;
+      m[s] := m[t];
+      m[t] :=  - 1
+   od.;
+
+Function PDenom(i,j) =
+   { improved April 3, 2002      }
+   for i = 1, cnt do
+      if not Equal(den[i], one) then
+         for j = 1, nn do
+            if Divides(den[i], num[j]) then
+               SDivide(den[i], num[j]);
+               den[i] := 1;
+               & >
+            fi
+         od
+      fi
+   od.;
+
+Function DoCon(h,i) =
+   { May 22, 2002 }
+   h := Con([den]);
+   cnt := cnt - h;
+   if h > 0 then
+      !!('cnt shrunk by ', h)
+   fi;
+   h := Con([num]);
+   if h > 0 then
+      !!('nn shrunk by ', h)
+   fi;
+   nn := nn - h;
+   if nn > 0 then
+      while num[nn] or num[nn] = - 1 do
+         nn:-;
+         if nn = 0 then
+            nn := 1;
+            & >
+         fi
+      od
+   fi;
+   if cnt > 0 then
+      while den[cnt] or den[cnt] = - 1 do
+         cnt:-;
+         if cnt = 0 then
+            cnt := 1;
+            & >
+         fi
+      od
+   fi.;
+
+Function Elim(n,m,j,x) =
+   j := 19 - n;
+   x :=  - Coef(dd[m], Var(j), 0)/Coef(dd[m], Var(j), 1);
+   [dd] := [dd]#(Var(j) = x);
+   ![dd].;
+
+Function Erase =
+   @([m1], [temp], [td], [cd], [val], [val2], [dd]);
+   @(dm, cols, time1, rows, [deg], [rowlst], [e], [m], [collst]);
+   @(ro, co, [collist], [rowlist]).;
+
+Function PDenom2(i,j,g) =
+   { improved April 3, 2002      }
+   for i = 1, cnt do
+      if not Equal(den[i], one) then
+         for j = 1, nn do
+            g := GCD(den[i], num[j]);
+            if not Equal(g, one) then
+               SDivide(g, num[j]);
+               SDivide(g, den[i])
+            fi;
+            if Equal(den[i], one) then
+               & >
+            fi
+         od
+      fi
+   od.;
+
+Function Next(ar,i,ss) =
+   { ar is an array of n exponents. i is starting point in ar.
+     ss indexes starting point in [deg].
+     Increment aa to the next sequence of exponents.     }
+   ar[i]:+;
+   if ar[i] > deg[i+ss] then
+      ar[i] := 0;
+      if i < n then
+         Next([ar], i + 1, ss)
+      fi
+   fi.;
+
+Function NotzerC(c,i) =
+   for i = 1, row do
+      if m1[i,c] <> 0 then
+         Return(1)
+      fi
+   od;
+   Return(0).;
+
+Function E(n,m,j,x) =
+   j := 19 - n;
+   x :=  - Coef(dd[m], Var(j), 0)/Coef(dd[m], Var(j), 1);
+   [dd] := [dd]#(Var(j) = x).;
+
+ Function SNotzerR2(r,j) =
+   for j = [m1]r do
+      Return(1)
+   od;
+   Return(0).;
+
+Function Extract(col,row,i,time1,time2,time) =
+   { Uses array [m1]. Changed May, October 1998.  August 2002        }
+   !!' Starting Extract Function  ';
+   time1 := &T;
+   col := Cols[m1];
+   row := Deg[m1]/col;
+   Array rowlist[1];
+   Array collist[1];
+   [rowlist] := 0;
+   [collist] := 0;
+   Array temp[1];
+   for i = 1, row do
+      if SNotzerR(i) then
+         [temp] := i;
+         [rowlist] := [rowlist]_[temp];
+         @<[rowlist]>
+      fi
+   od;
+   STrans[m1];
+   for i = 1, col do
+      if SNotzerR2(i) then
+         [temp] := i;
+         [collist] := [collist]_[temp];
+         @<[collist]>
+      fi
+   od;
+   STrans[m1];
+   [rowlst] := [rowlist[1,2~]];
+   [collst] := [collist[1,2~]];
+   @<[rowlist]>;
+   @<[collist]>;
+   @[temp];
+   time2 := &T;
+   !!' Done Extract Function   '.;
+
+;; probably better to use Set2 if [m4] is very large.
+Function Setup(n,time1,time,i,j,k,za,zb,mon) =
+   { n is the number of variables.  Create and fill
+     the array [m1]. Changed May 1998.                   }
+   !!' Starting Setup Function ';
+   time1 := &T;
+   Array deg[2n];
+   for i = 1 to 2n do
+      deg[i] := Deg(^dm, i)
+   od;
+   ![deg;
+   !;
+   rows := Prod < i = 1, n > [deg[i]+1];
+   cols := Prod < i = n + 1, 2n > [deg[i]+1];
+   Array m1[rows,cols] Sparse;
+   Array rowexp[n];
+   Array colexp[n];
+   [rowexp] := 0;
+   for i = 1 to rows do
+      mon := Prod < j = 1, n > [(Var(j))^rowexp[j]];
+      if i = 1 then
+         za := dm
+      else
+         za := Mcoef(^dm, mon)
+      fi;
+      for j = 1 to n do
+         if rowexp[j] = 0 then
+            za := za#(Var(j) = 0)
+         fi
+      od;
+      [colexp] := 0;
+      for j = 1 to cols do
+         mon := Prod < k = 1, n > [(Var(k+n))^colexp[k]];
+         if j = 1 then
+            zb := za
+         else
+            zb := Mcoef(^za, mon)
+         fi;
+         for k = 1 to n do
+            if colexp[k] = 0 then
+               zb := zb#(Var(k + n) = 0)
+            fi
+         od;
+         m1[i,j] := zb;
+         Next([colexp], 1, n)
+      od;
+      Next([rowexp], 1, 0)
+   od;
+   @[rowexp];
+   @[colexp];
+   @[deg];
+   !!' Done Setup Function '.;
+
+;; auxiliary display functions
+
+Func N(i) = for i=1,nn do !Terms(^num[i]); !' ' od.;
+
+Func D(i) = for i=1,cnt do !Terms(den[i]); !' ' od.;
+
+Func N2(i) = for i=1,nn do !!num[i]; ! od.;
+
+Func N3(i) = for i=1,nn-1 do !!num[i]; ! od.;
+
+Func D2(i) = for i=1,cnt-1 do !den[i]; !' ' od.;
+
+Func DC = DoCon(1,Cols[m4]).;
+
+Func D3 = Disp3(1, Cols[m4]).;
+
+Func P(i) = Prod<i=1,nn> [ num[i] ].;
+
+Func Pre = 
+    M3([m4],1);
+    M([m4],1);
+    STrans[m4];
+    M3([m4],1);
+    M([m4],1);
+    STrans[m4].;
+
+;; use KN at the end to compactify the num list.
+Func KN(i,j,g) = for i=1,nn do for j=i+1,nn do g:=GCD(num[i],num[j]); if g<>1 then SDivide(g,num[j]); !!(i,j,g) fi od od.;
+
+Func KD(i,j,g) = for i=1,nn do for j=1,cnt do g:=GCD(num[i],den[j]); if g<>1 then SDivide(g,num[i]); SDivide(g,den[j]); !!(i,j,g) fi od od.;
+
+;; instead of just running Fin(1,n) where m4 is nxn, consider this:
+;; for i= 1, n do Fin(i,i); DC; Pre; KD; DC od
+
+
+nn:=0;
+cnt:=0;
+zer:=0;
+one:=1;
+
+;; Here are the equations!
+Array d[3];
+
+[d] := [[ a1*t1^2*t2^2 + b1*t1^2 + 2*c1*t1*t2 + d1*t2^2 + e1,
+          a2*t2^2*t3^2 + b2*t2^2 + 2*c2*t2*t3 + d2*t3^2 + e2,
+          a3*t1^2*t3^2 + b3*t1^2 + 2*c3*t1*t3 + d3*t3^2 + e3   ]];
+
+;; These arrays are used by the Fin method.
+Array lcm[1100],num[10000],den[10000];
+
+&x;
+
+Ma([d]);
+
+;; These commands extract a maximal minor from [m2], creating [m4]. This is the Kapur-Saxena-Yang idea.
+;; We drop into the ring Z/44449 to save time.  44449 is a random 'large' prime.
+&(p=44449: *[m2]);
+[m3] := [m2]#(t3 = 5,11,-23, 17,29,-31, 37,-43,47, -7,53,59, 61,67,-71);
+
+Pseudet([m3],[c]);
+&(p=_i: *[m2], [m3],[c]);
+
+Array m4[Cols[c], Cols[c]] Sparse;
+
+Fill;
+
+;; [m4] now exists. Its determinant is a multiple of the resultant.
+
+&x;
+
