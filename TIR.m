@@ -1,6 +1,11 @@
 (* ::Package:: *)
 
-(* ::Section:: *)
+(*Note*)
+(*To Use TIR and FeynCalc at the Same Time, Load Order is important, FeynCalc should be Loaded Before TIR*)
+Global`FCSolve3=Solve3;
+
+
+(* ::Section::Closed:: *)
 (*TIR Package*)
 
 
@@ -50,7 +55,6 @@ fmvD::usage="The TIRDimension in Fermat";
 
 (*The Solve3 from FeynCalc Will Be Used in TIRFCS3*)
 (*FeynCalc Should be Loaded Before TIR*)
-fcSolve3=HighEnergyPhysics`general`Solve3`Solve3;
 
 
 Begin["`Private`"];
@@ -88,7 +92,7 @@ TIRFV[p_+q_,mu_]:=TIRFV[p,mu]+TIRFV[q,mu]
 TIRSP[p_,q1_+q2_]:=TIRSP[p,q1]+TIRSP[p,q2]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*TIR Core*)
 
 
@@ -203,7 +207,7 @@ Clear[TIRFCS3];
 TIRFCS3[m_,b_]:=Module[{xcs,tmp},
 xcs=Table[xc[in],{in,Length[b]}];
 tmp=Map[(#==0)&,m.xcs-b];
-tmp=fcSolve3[tmp,xcs];
+tmp=Global`FCSolve3[tmp,xcs];
 tmp=xcs/.tmp;
 Return[tmp];
 ];
