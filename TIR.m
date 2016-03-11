@@ -5,7 +5,7 @@
 Global`FCSolve3=Solve3;
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*TIR Package*)
 
 
@@ -14,7 +14,7 @@ BeginPackage["TIR`"];
 
 Unprotect[TIRIR];
 Clear[TIRIR];
-TIRIR/:MakeBoxes[TIRIR[lpi_,ep_],TraditionalForm]:=With[{exp=Apply[Times,Map[Function[mi,TIRFV[mi[[1]],mi[[2]]]],lpi]]},MakeBoxes[exp,TraditionalForm]];
+TIRIR/:MakeBoxes[TIRIR[lpi_,_],TraditionalForm]:=With[{exp=Apply[Times,Map[Function[mi,TIRFV[mi[[1]],mi[[2]]]],lpi]]},MakeBoxes[exp,TraditionalForm]];
 Protect[TIRIR];
 
 
