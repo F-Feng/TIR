@@ -5,7 +5,7 @@
 Global`FCSolve3=Solve3;
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*TIR Package*)
 
 
@@ -331,23 +331,24 @@ TIRFC[Longest[c_.] (exp1_+exp2_),lp_List,ep_List]:=TIRFC[c exp1,lp,ep]+TIRFC[c e
 (*Using TIDL in FeynCalc*)
 
 
-TIRFC[ex_Times,lp_List,ep_List]/;MatchQ[List@@ex,{FCI@FVD[Alternatives@@lp,_]...}]:=Module[{tmp},
+TIRFC[ex_Times,lp_List,ep_List]/;MatchQ[List@@ex,{FCI@FVD[Alternatives@@lp,_]...}]:=Module[{tmp,tmp1},
 tmp=List@@ex;
 On[Assert];Assert[ex===Times@@tmp];
-tmp=tmp/.FCI@FVD[lm_,mu_]:>{lm,mu};
-tmp=TIDL[tmp,ep];
-If[tmp===ex,tmp=TIR[tmp,ep]];
+tmp1=tmp/.FCI@FVD[lm_,mu_]:>{lm,mu};
+tmp=TIDL[tmp1,ep];
+If[tmp===ex,tmp=TIR[tmp1,ep]];
 tmp=TIR2FC[tmp];
+On[Assert];Assert[FreeQ[tmp,TIR]];
 Return[tmp];
 ];
 
 
 TIRFC[ex_,lp_List,ep_List]/;MatchQ[ex,FCI@FVD[Alternatives@@lp,_]]:=Module[{tmp,tmp1,VF},
-tmp=ex/.FCI@FVD[lm_,mu_]:>VF[{lm,mu}];
-tmp=List@@tmp;
-tmp1=tmp/.VF->Identity;
+tmp={ex};
+tmp1=tmp/.FCI@FVD[lm_,mu_]:>{lm,mu};
 tmp=TIDL[tmp1,ep];
 If[tmp===ex,tmp=TIR[tmp1,ep]];
 tmp=TIR2FC[tmp];
+On[Assert];Assert[FreeQ[tmp,TIR]];
 Return[tmp];
 ];
